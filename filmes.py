@@ -20,6 +20,9 @@ class Filme(Base):
         self.nota = nota_filme
         self.disponivel = disponivel
 
+    def __repr__(self):
+        print(f"Titulo: {self.titulo} | Genero:{self.genero} | Ano de Lançamento:{self.ano_lancamento} | Nota:{self.nota} | Disponibilidade:{self.disponivel}")
+
 
 engine = create_engine("sqlite:///catalogo_filmes.db")
 
@@ -55,3 +58,41 @@ def cadastrar_filme():
         except Exception as erro:
             session.rollback()
             print(f"Ocorreu um erro: {erro}")
+
+def listar_filmes():
+    print(f"--- FILMES CADASTRADOS ---")
+    with Session() as session:
+        try:
+            conferir_tabela = session.query(Filme).all()
+
+            if conferir_tabela is None:
+                print(F"Sua tabela esta vazia")
+            else:
+                for f in conferir_tabela:
+                    print(f)
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro: {erro}")
+
+def atualizar_filmes():
+    print(F"--- ATUALIZE UM FILME ---")
+    id_atualizar = int(input("Digite o ID do filme que você quer atualizar: "))
+    with Session() as session:
+        try:
+            validar = session.query(Filme).filter_by(id=id_atualizar).first()
+            if validar is None:
+                print(F"Filme com ID{id_atualizar}, não encontrado na tabela")
+            else:
+                nome_filme = input("Digite o titulo do filme: ")
+                genero = input("Digite o genero do filme: ")
+                ano = int(input("Digite o ano de lançamento do filme: "))
+                nota = float(input("Digite a nota do filme: "))
+                validar.titulo, validar.genero, validar.ano_lancamento, validar.nota = nome_filme, genero, ano, nota
+                session.commit()
+                print("Filme atualizado com sucesso com sucesso")
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro: {erro}")
+
+    
+atualizar_filmes()
