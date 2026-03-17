@@ -95,4 +95,20 @@ def atualizar_filmes():
             print(f"Ocorreu um erro: {erro}")
 
     
-atualizar_filmes()
+def deletar_filmes():
+    print(f"--- DELETAR FILMES---")
+    id_deletar = int(input("Digite o ID do filme que você quer deletar: "))
+    with Session() as session:
+        try:
+            validar = session.query(Filme).filter_by(id=id_deletar).first()
+            if validar is None:
+                print(F"Filme com ID{id_deletar}, não encontrado na tabela")
+            else:
+                session.delete(validar)
+                session.commit()
+                print(F"Filme deletado com sucesso")
+        except Exception as erro:
+            session.rollback()
+            print(f"Ocorreu um erro: {erro}")
+
+deletar_filmes()
